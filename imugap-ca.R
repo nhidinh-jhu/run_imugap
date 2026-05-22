@@ -1,6 +1,8 @@
 # Test run ImuGap on California
 library(imuGAP)
 library(tidyverse)
+library(parallel)
+optimal_cores <- parallel::detectCores() - 2
 ## Load data specific for imuGAP
 
 ### LOCATIONS
@@ -20,6 +22,9 @@ populations <- readRDS("output/obs_populations.rds")
 # Update column names to fit imuGAP requirements
 populations <- populations %>%
   rename(loc_id = location)
+# Normalize birth cohort to start with 1
+populations <- populations %>% 
+  mutate(cohort = cohort - 1988)
 
 ## Canonicalize the data
 locations <- canonicalize_locations(locations)
@@ -31,12 +36,14 @@ populations <- canonicalize_populations(populations,
                                         #max_age,
                                         max_dose = 2L)
 ## Run ImuGap
-imuGAP(
+ca_outputs <- imuGAP(
   observations,
   populations,
   locations,
-  imugaps_opts = imugap_options(df = 5L, dose_schedule = c(1, 4), object = c("default")),
-  stan_opts = stan_options(chains = 2, iter = 500)
+  imugap_opts = imugap_options(df = 5L, dose_schedule = c(1, 4), object = c("default")),
+  stan_opts = stan_options(chains = 2, 
+                           iter = 500,
+                           cores = optimal_cores)
 )
 
 ## Extract imuGAP parameters
