@@ -16,22 +16,14 @@ stans_spec_init <- rep(list(list(beta_bs = rep(-2.94, 5),
 ## Load data specific for imuGAP
 
 ### LOCATIONS
-locations <- readRDS("output/locations.rds")
-# Update column names to fit imuGAP requirements
-locations <- locations %>%
-  rename(loc_id = id)
+locations <- readRDS("tidyschoolvax/locations.rds")
+
 
 ### OBSERVATIONS
-observations <- readRDS("output/obs.rds")
-# Update column names to fit imuGAP requirements
-observations <- observations %>%
-  rename(obs_id = row_id)
+observations <- readRDS("tidyschoolvax/obs.rds")
 
 ### POPULATIONS
-populations <- readRDS("output/obs_populations.rds")
-# Update column names to fit imuGAP requirements
-populations <- populations %>%
-  rename(loc_id = location)
+populations <- readRDS("tidyschoolvax/obs_populations.rds")
 # Normalize birth cohort to start with 1
 populations <- populations %>% 
   mutate(cohort = cohort - 1988)
